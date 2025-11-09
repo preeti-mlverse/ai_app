@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "AI Study App",
+    "slug": "ai-study-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+     "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourdomain.aistudyapp"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F9FAFB"
+      },
+      "package": "com.yourdomain.aistudyapp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Inter-Regular.ttf",
+            "./assets/fonts/Poppins-Regular.ttf",
+            "./assets/fonts/PatrickHand-Regular.ttf"
+          ]
+        }
+      ]
+    ]
+  }
+}
