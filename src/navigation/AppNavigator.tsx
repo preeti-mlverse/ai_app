@@ -14,25 +14,25 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-export default function AppNavigator() {
+function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator
+        id="root-stack"
         screenOptions={{
           headerStyle: {
-            backgroundColor: theme.colors.background,
+            backgroundColor: theme.colors.background || '#F8FAFC',
             elevation: 0,
             shadowOpacity: 0,
             borderBottomWidth: 0,
           },
           headerTintColor: theme.colors.primary,
           headerTitleStyle: {
-            fontFamily: theme.typography.handDrawn,
-            fontSize: theme.typography.fontSize.xl,
-            fontWeight: theme.typography.fontWeight.bold,
+            fontSize: 24,
+            fontWeight: 'bold' as const,
           },
           cardStyle: {
-            backgroundColor: theme.colors.background,
+            backgroundColor: theme.colors.background || '#F8FAFC',
           },
         }}
       >
@@ -55,3 +55,5 @@ export default function AppNavigator() {
     </NavigationContainer>
   );
 }
+
+export default AppNavigator;

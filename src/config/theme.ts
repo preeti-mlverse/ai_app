@@ -1,49 +1,58 @@
 // src/config/theme.ts
-// Design System: Friendly, playful, warm sketch-style for teens (13-18)
+// Design System: Friendly, playful, vibrant EdTech style for teens (13-18)
 
 export const colors = {
-  // Primary Colors
-  primary: '#3F51B5',      // Main blue - trust & focus
-  primaryLight: '#7986CB',
-  primaryDark: '#303F9F',
+  // Primary Colors - More vibrant
+  primary: '#6366F1',        // Vibrant indigo (modern, energetic)
+  primaryLight: '#818CF8',
+  primaryDark: '#4F46E5',
   
-  // Secondary Colors
-  secondary: '#64B5F6',    // Sky blue - approachable
-  secondaryLight: '#90CAF9',
-  secondaryDark: '#42A5F5',
+  // Secondary Colors - Warm & inviting
+  secondary: '#F59E0B',      // Warm amber/orange
+  secondaryLight: '#FBBF24',
+  secondaryDark: '#D97706',
   
-  // Accent
-  accent: '#00BCD4',       // Teal - engagement
-  accentLight: '#4DD0E1',
-  accentDark: '#0097A7',
+  // Accent Colors - Playful
+  accent: '#EC4899',         // Pink accent (fun, engaging)
+  accentLight: '#F472B6',
+  accentDark: '#DB2777',
   
   // Background
-  background: '#F9FAFB',   // Calm, focused
+  background: '#F8FAFC',     // Soft blue-gray
   card: '#FFFFFF',
   
   // Text
-  textPrimary: '#212121',
-  textSecondary: '#757575',
-  textTertiary: '#9E9E9E',
+  textPrimary: '#1E293B',
+  textSecondary: '#64748B',
+  textTertiary: '#94A3B8',
   
   // Status Colors
-  success: '#66BB6A',      // Green - achievements
-  successLight: '#81C784',
+  success: '#10B981',        // Green - achievements
+  successLight: '#34D399',
   
-  error: '#EF5350',        // Red - mistakes (gentle)
-  errorLight: '#E57373',
+  error: '#EF4444',          // Red - mistakes
+  errorLight: '#F87171',
   
-  warning: '#FFCA28',      // Yellow - attention
-  warningLight: '#FFD54F',
+  warning: '#F59E0B',        // Amber - attention
+  warningLight: '#FBBF24',
+  
+  info: '#3B82F6',           // Blue - information
+  infoLight: '#60A5FA',
   
   // Special
-  xpGold: '#FFC107',       // XP and rewards
-  streakFire: '#FF6F00',   // Streak flame
-  badgePurple: '#9C27B0',  // Achievement badges
+  xpGold: '#FBBF24',         // XP and rewards (gold)
+  streakFire: '#F97316',     // Streak flame (orange)
+  badgePurple: '#A855F7',    // Achievement badges (purple)
+  celebration: '#10B981',    // Celebration green
+  
+  // Gradients (for hero sections)
+  gradient1: '#6366F1',      // Primary gradient start
+  gradient2: '#EC4899',      // Primary gradient end
+  gradient3: '#F59E0B',      // Secondary gradient
   
   // Sketch Borders (semi-transparent for hand-drawn effect)
-  sketchBorder: 'rgba(33, 33, 33, 0.6)',
-  sketchBorderLight: 'rgba(33, 33, 33, 0.3)',
+  sketchBorder: 'rgba(30, 41, 59, 0.6)',
+  sketchBorderLight: 'rgba(30, 41, 59, 0.2)',
   
   // Shadows
   shadow: 'rgba(0, 0, 0, 0.08)',
@@ -53,9 +62,9 @@ export const colors = {
 
 export const typography = {
   // Font Families
-  body: 'Inter',           // Clean sans for body text
-  bodyAlt: 'Poppins',      // Alternative body font
-  handDrawn: 'PatrickHand', // Hand-drawn for headlines, badges
+  body: 'System',            // System default (Inter/SF Pro)
+  bodyAlt: 'System',         // Alternative body font
+  handDrawn: 'System',       // Will use system until custom fonts loaded
   
   // Font Sizes (scaled for mobile)
   fontSize: {
@@ -111,44 +120,43 @@ export const borderRadius = {
   md: 12,
   lg: 16,
   xl: 20,
-  '2xl': 24,      // Primary radius for cards
-  full: 9999,     // Pills, avatars
+  '2xl': 24,
+  '3xl': 32,
+  full: 9999,
 };
 
 export const shadows = {
-  // Soft shadows for cards (sketch-style)
+  // Soft shadows for cards
   sm: {
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
-    shadowRadius: 2,
+    shadowRadius: 4,
     elevation: 2,
   },
   md: {
     shadowColor: colors.shadowMedium,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
-    shadowRadius: 4,
+    shadowRadius: 8,
     elevation: 4,
   },
   lg: {
     shadowColor: colors.shadowStrong,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 1,
-    shadowRadius: 6,
+    shadowRadius: 12,
     elevation: 6,
   },
 };
 
 // Sketch-style stroke configurations
 export const sketchStrokes = {
-  // Border widths for hand-drawn effect
   thin: 1.5,
   regular: 2,
   thick: 2.5,
   
-  // Dash array for sketchy borders (SVG)
-  dashArray: '3, 2',  // Short dashes = sketchy
+  dashArray: '3, 2',
   dashOffset: 0,
 };
 
@@ -166,17 +174,15 @@ export const layout = {
   screenPadding: spacing.base,
   cardPadding: spacing.base,
   headerHeight: 60,
-  tabBarHeight: 70,
+  tabBarHeight: 65,
   
-  // Content widths
   contentMaxWidth: 600,
   cardMinHeight: 120,
   
-  // Grid
   gridGap: spacing.md,
 };
 
-// Character poses (for Byte mascot and student avatar)
+// Character poses (for mascot and avatars)
 export const characterPoses = {
   idle: 'idle',
   cheering: 'cheering',
@@ -184,66 +190,61 @@ export const characterPoses = {
   celebrating: 'celebrating',
   confused: 'confused',
   encouraging: 'encouraging',
+  reading: 'reading',
+  studying: 'studying',
+  achievement: 'achievement',
 };
 
-// Sketch-style text styles (reusable)
+// Text styles (reusable)
 export const textStyles = {
-  // Headers (use hand-drawn font)
+  // Headers
   h1: {
-    fontFamily: typography.handDrawn,
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
     lineHeight: typography.lineHeight.tight,
   },
   h2: {
-    fontFamily: typography.handDrawn,
     fontSize: typography.fontSize['2xl'],
     fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
     lineHeight: typography.lineHeight.tight,
   },
   h3: {
-    fontFamily: typography.handDrawn,
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.semibold,
     color: colors.textPrimary,
     lineHeight: typography.lineHeight.tight,
   },
   
-  // Body text (clean sans)
+  // Body text
   body: {
-    fontFamily: typography.body,
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.regular,
     color: colors.textPrimary,
     lineHeight: typography.lineHeight.normal,
   },
   bodyLarge: {
-    fontFamily: typography.body,
     fontSize: typography.fontSize.md,
     fontWeight: typography.fontWeight.regular,
     color: colors.textPrimary,
     lineHeight: typography.lineHeight.normal,
   },
   bodySmall: {
-    fontFamily: typography.body,
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.regular,
     color: colors.textSecondary,
     lineHeight: typography.lineHeight.normal,
   },
   
-  // Special text (badges, celebrations)
+  // Special text
   badge: {
-    fontFamily: typography.handDrawn,
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
     color: colors.primary,
     lineHeight: typography.lineHeight.tight,
   },
   celebration: {
-    fontFamily: typography.handDrawn,
     fontSize: typography.fontSize['2xl'],
     fontWeight: typography.fontWeight.bold,
     color: colors.success,
@@ -264,44 +265,44 @@ export const iconSizes = {
 // Activity-specific colors (8 gamified activities)
 export const activityColors = {
   dragDropMatch: {
-    primary: '#3F51B5',
-    background: '#E8EAF6',
-    accent: '#5C6BC0',
+    primary: '#6366F1',
+    background: '#EEF2FF',
+    accent: '#818CF8',
   },
   fillBlanks: {
-    primary: '#00BCD4',
-    background: '#E0F7FA',
-    accent: '#26C6DA',
+    primary: '#06B6D4',
+    background: '#ECFEFF',
+    accent: '#22D3EE',
   },
   sequenceOrder: {
-    primary: '#9C27B0',
-    background: '#F3E5F5',
-    accent: '#AB47BC',
+    primary: '#A855F7',
+    background: '#FAF5FF',
+    accent: '#C084FC',
   },
   trueFalseSwipe: {
-    primary: '#4CAF50',
-    background: '#E8F5E9',
-    accent: '#66BB6A',
+    primary: '#10B981',
+    background: '#ECFDF5',
+    accent: '#34D399',
   },
   tapCorrect: {
-    primary: '#FF9800',
-    background: '#FFF3E0',
-    accent: '#FFA726',
+    primary: '#F59E0B',
+    background: '#FFFBEB',
+    accent: '#FBBF24',
   },
   puzzleReveal: {
-    primary: '#E91E63',
-    background: '#FCE4EC',
-    accent: '#EC407A',
+    primary: '#EC4899',
+    background: '#FDF2F8',
+    accent: '#F472B6',
   },
   spotDifference: {
-    primary: '#F44336',
-    background: '#FFEBEE',
-    accent: '#EF5350',
+    primary: '#EF4444',
+    background: '#FEF2F2',
+    accent: '#F87171',
   },
   sortingGame: {
-    primary: '#607D8B',
-    background: '#ECEFF1',
-    accent: '#78909C',
+    primary: '#6366F1',
+    background: '#EEF2FF',
+    accent: '#818CF8',
   },
 };
 

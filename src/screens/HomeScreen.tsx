@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,286 +6,332 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { LinearGradient } from 'expo-linear-gradient';
 import { theme } from '../config/theme';
-import { SketchCard } from '../components/common/SketchCard';
-import { HandDrawnButton } from '../components/common/HandDrawnButton';
-import { ByteMascot } from '../components/common/ByteMascot';
-import { conceptService } from '../services/conceptService';
-import { gamificationService } from '../services/gamificationService';
-import { LearningConcept, UserProfile } from '../types';
-
-type HomeScreenProp = StackNavigationProp<RootStackParamList>;
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ProgressPath from '../components/illustrations/ProgressPath';
 
 export default function HomeScreen() {
-  const navigation = useNavigation<HomeScreenProp>();
-  const [nextConcept, setNextConcept] = useState<LearningConcept | null>(null);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const insets = useSafeAreaInsets();
+  const [userProfile] = useState({
+    name: 'Alex',
+    current_streak: 5,
+    total_xp: 1250,
+    level: 8,
+  });
 
-  // Mock user ID - replace with actual auth
-  const userId = 'demo-user-id';
+  // Journey progress data
+  const journeyCheckpoints = [
+    { id: '1', title: 'Intro', completed: true, current: false },
+    { id: '2', title: 'Basics', completed: true, current: false },
+    { id: '3', title: 'AI Types', completed: false, current: true },
+    { id: '4', title: 'ML', completed: false, current: false },
+    { id: '5', title: 'Expert', completed: false, current: false },
+  ];
 
-  useEffect(() => {
-    loadHomeData();
-  }, []);
-
-  const loadHomeData = async () => {
-    try {
-      setLoading(true);
-      
-      // Load user profile
-      const profile = await gamificationService.getUserProfile(userId);
-      setUserProfile(profile);
-
-      // Load next concept
-      const concept = await conceptService.getNextConcept(userId);
-      setNextConcept(concept);
-    } catch (error) {
-      console.error('Error loading home data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleStartLearning = () => {
-    if (nextConcept) {
-      navigation.navigate('Concept', { conceptId: nextConcept.id });
-    }
-  };
+  const overallProgress = 45; // Calculate based on completed lessons
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Header Section */}
-      <View style={styles.header}>
-        <Text style={styles.greeting}>
-          Hey there! 👋
-        </Text>
-        <Text style={styles.subGreeting}>
-          Ready to learn something awesome?
-        </Text>
-      </View>
-
-      {/* Streak and XP Card */}
-      {userProfile && (
-        <SketchCard style={styles.statsCard}>
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
-                🔥 {userProfile.current_streak}
-              </Text>
-              <Text style={styles.statLabel}>Day Streak</Text>
-            </View>
-            
-            <View style={styles.statDivider} />
-            
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
-                ⭐ {userProfile.total_xp}
-              </Text>
-              <Text style={styles.statLabel}>Total XP</Text>
-            </View>
-            
-            <View style={styles.statDivider} />
-            
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
-                🎯 {userProfile.level}
-              </Text>
-              <Text style={styles.statLabel}>Level</Text>
-            </View>
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: 80 } // Space for tab bar
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section */}
+        <LinearGradient
+          colors={[theme.colors.primary, theme.colors.secondary]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.heroSection}
+        >
+          <View style={styles.heroContent}>
+            <Text style={styles.welcomeText}>Hey {userProfile.name}! 👋</Text>
+            <Text style={styles.motivationText}>
+              You're {overallProgress}% through your learning journey!
+            </Text>
           </View>
-        </SketchCard>
-      )}
+          
+          <View style={styles.characterContainer}>
+            <Text style={{ fontSize: 80 }}>🎓</Text>
+            <Text style={styles.characterLabel}>Let's Learn!</Text>
+          </View>
+        </LinearGradient>
 
-      {/* Byte Mascot Welcome */}
-      <ByteMascot
-        message="Let's continue where you left off! You're doing great! 🚀"
-        pose="encouraging"
-      />
+        {/* Journey Progress - NEW SECTION */}
+        <View style={styles.journeySection}>
+          <Text style={styles.sectionTitle}>Your Learning Journey</Text>
+          <ProgressPath 
+            checkpoints={journeyCheckpoints}
+            currentProgress={overallProgress}
+          />
+        </View>
 
-      {/* Next Concept Card */}
-      {nextConcept && (
-        <SketchCard style={styles.nextConceptCard}>
+        {/* Stats Cards */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <View style={styles.statIcon}>
+              <Text style={{ fontSize: 32 }}>🔥</Text>
+            </View>
+            <Text style={styles.statValue}>{userProfile.current_streak}</Text>
+            <Text style={styles.statLabel}>Day Streak</Text>
+          </View>
+
+          <View style={styles.statCard}>
+            <View style={styles.statIcon}>
+              <Text style={{ fontSize: 32 }}>⭐</Text>
+            </View>
+            <Text style={styles.statValue}>{userProfile.total_xp}</Text>
+            <Text style={styles.statLabel}>Total XP</Text>
+          </View>
+
+          <View style={styles.statCard}>
+            <View style={styles.statIcon}>
+              <Text style={{ fontSize: 32 }}>🎯</Text>
+            </View>
+            <Text style={styles.statValue}>{userProfile.level}</Text>
+            <Text style={styles.statLabel}>Level</Text>
+          </View>
+        </View>
+
+        {/* Continue Learning */}
+        <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Continue Learning</Text>
           
-          <View style={styles.conceptInfo}>
-            <Text style={styles.conceptNumber}>
-              {nextConcept.concept_number}
-            </Text>
-            <Text style={styles.conceptTitle}>
-              {nextConcept.concept_title}
-            </Text>
-            <Text style={styles.conceptMeta}>
-              {nextConcept.estimated_read_time / 60} min read · {nextConcept.difficulty}
-            </Text>
-          </View>
-
-          <HandDrawnButton
-            title="Start Learning 📚"
-            onPress={handleStartLearning}
-            variant="primary"
-            size="large"
-          />
-        </SketchCard>
-      )}
-
-      {/* Today's Goal Card */}
-      <SketchCard style={styles.goalCard}>
-        <Text style={styles.sectionTitle}>Today's Goal</Text>
-        <View style={styles.goalProgress}>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: '60%' }]} />
-          </View>
-          <Text style={styles.goalText}>
-            3 / 5 concepts completed
-          </Text>
-        </View>
-      </SketchCard>
-
-      {/* Quick Actions */}
-      <View style={styles.quickActions}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.actionGrid}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionEmoji}>🏆</Text>
-            <Text style={styles.actionLabel}>Achievements</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionEmoji}>📊</Text>
-            <Text style={styles.actionLabel}>Progress</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionEmoji}>🎮</Text>
-            <Text style={styles.actionLabel}>Activities</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionEmoji}>👥</Text>
-            <Text style={styles.actionLabel}>Friends</Text>
+          <TouchableOpacity style={styles.learningCard}>
+            <View style={styles.learningCardContent}>
+              <View style={styles.learningInfo}>
+                <Text style={styles.conceptNumber}>Lesson 3.1</Text>
+                <Text style={styles.conceptTitle}>Types of AI</Text>
+                <Text style={styles.conceptMeta}>7 min • Medium</Text>
+              </View>
+              
+              <View style={styles.learningIllustration}>
+                <Text style={{ fontSize: 60 }}>🤖</Text>
+              </View>
+            </View>
+            
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar}>
+                <View style={[styles.progressFill, { width: '20%' }]} />
+              </View>
+              <Text style={styles.progressText}>20% Complete</Text>
+            </View>
           </TouchableOpacity>
         </View>
-      </View>
-    </ScrollView>
+
+        {/* Quick Actions */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          
+          <View style={styles.actionGrid}>
+            {[
+              { icon: '🏆', label: 'Achievements', color: '#F59E0B' },
+              { icon: '📊', label: 'Progress', color: '#6366F1' },
+              { icon: '🎮', label: 'Activities', color: '#EC4899' },
+              { icon: '👥', label: 'Community', color: '#10B981' },
+            ].map((action, index) => (
+              <TouchableOpacity 
+                key={index} 
+                style={[styles.actionCard, { borderColor: action.color }]}
+              >
+                <View style={[styles.actionIcon, { backgroundColor: action.color + '20' }]}>
+                  <Text style={{ fontSize: 40 }}>{action.icon}</Text>
+                </View>
+                <Text style={styles.actionLabel}>{action.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: '#F8FAFC',
   },
   content: {
-    padding: theme.spacing.base,
+    flexGrow: 1,
   },
-  header: {
-    marginBottom: theme.spacing.lg,
+  heroSection: {
+    padding: 24,
+    paddingTop: 60,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    marginBottom: 16,
   },
-  greeting: {
-    ...theme.textStyles.h1,
-    marginBottom: theme.spacing.xs,
+  heroContent: {
+    marginBottom: 16,
   },
-  subGreeting: {
-    ...theme.textStyles.body,
-    color: theme.colors.textSecondary,
+  welcomeText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 8,
   },
-  statsCard: {
-    marginBottom: theme.spacing.base,
+  motivationText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    opacity: 0.9,
   },
-  statsRow: {
+  characterContainer: {
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  characterLabel: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    marginTop: 8,
+  },
+  // NEW STYLE for journey section
+  journeySection: {
+    marginVertical: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 16,
+    marginHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 24,
   },
-  statItem: {
+  statCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
     alignItems: 'center',
     flex: 1,
+    marginHorizontal: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  statIcon: {
+    marginBottom: 8,
   },
   statValue: {
-    ...theme.textStyles.h2,
-    marginBottom: theme.spacing.xs,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 4,
   },
   statLabel: {
-    ...theme.textStyles.bodySmall,
+    fontSize: 12,
+    color: '#64748B',
   },
-  statDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: theme.colors.sketchBorderLight,
-  },
-  nextConceptCard: {
-    marginBottom: theme.spacing.base,
+  sectionContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 24,
   },
   sectionTitle: {
-    ...theme.textStyles.h3,
-    marginBottom: theme.spacing.md,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 16,
   },
-  conceptInfo: {
-    marginBottom: theme.spacing.base,
+  learningCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  learningCardContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  learningInfo: {
+    flex: 1,
   },
   conceptNumber: {
-    ...theme.textStyles.bodySmall,
-    color: theme.colors.primary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 12,
+    color: '#6366F1',
+    fontWeight: '600',
+    marginBottom: 4,
   },
   conceptTitle: {
-    ...theme.textStyles.h3,
-    marginBottom: theme.spacing.xs,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 4,
   },
   conceptMeta: {
-    ...theme.textStyles.bodySmall,
-    color: theme.colors.textSecondary,
+    fontSize: 14,
+    color: '#64748B',
   },
-  goalCard: {
-    marginBottom: theme.spacing.base,
+  learningIllustration: {
+    marginLeft: 16,
   },
-  goalProgress: {
-    gap: theme.spacing.sm,
+  progressContainer: {
+    marginTop: 12,
   },
   progressBar: {
-    height: 12,
-    backgroundColor: theme.colors.secondary + '30',
-    borderRadius: theme.borderRadius.full,
+    height: 8,
+    backgroundColor: '#6366F1' + '20',
+    borderRadius: 8,
     overflow: 'hidden',
+    marginBottom: 8,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: theme.colors.primary,
-    borderRadius: theme.borderRadius.full,
+    backgroundColor: '#6366F1',
+    borderRadius: 8,
   },
-  goalText: {
-    ...theme.textStyles.body,
-    textAlign: 'center',
-  },
-  quickActions: {
-    marginBottom: theme.spacing.xl,
+  progressText: {
+    fontSize: 12,
+    color: '#64748B',
+    textAlign: 'right',
   },
   actionGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.md,
+    justifyContent: 'space-between',
   },
-  actionButton: {
-    width: '47%',
-    aspectRatio: 1,
-    backgroundColor: theme.colors.card,
-    borderRadius: theme.borderRadius.xl,
-    borderWidth: theme.sketchStrokes.regular,
-    borderColor: theme.colors.sketchBorderLight,
+  actionCard: {
+    width: '48%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
     alignItems: 'center',
-    justifyContent: 'center',
-    ...theme.shadows.sm,
+    marginBottom: 12,
+    borderWidth: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  actionEmoji: {
-    fontSize: 40,
-    marginBottom: theme.spacing.sm,
+  actionIcon: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
   },
   actionLabel: {
-    ...theme.textStyles.body,
-    fontFamily: theme.typography.handDrawn,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1E293B',
   },
 });
