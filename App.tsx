@@ -1,139 +1,68 @@
-// // App.tsx
-// import React, { useEffect, useState } from 'react';
-// import { StatusBar } from 'expo-status-bar';
-// import { SafeAreaProvider } from 'react-native-safe-area-context';
-// import { useFonts } from 'expo-font';
-// import * as SplashScreen from 'expo-splash-screen';
-// import {
-//   Inter_400Regular,
-//   Inter_500Medium,
-//   Inter_600SemiBold,
-// } from '@expo-google-fonts/inter';
-// import {
-//   Poppins_400Regular,
-//   Poppins_600SemiBold,
-// } from '@expo-google-fonts/poppins';
-// import {
-//   PatrickHand_400Regular,
-// } from '@expo-google-fonts/patrick-hand';
-
-// // ✅ CORRECTED IMPORTS (removed ./ai_app/)
-// import AppNavigator from './src/navigation/AppNavigator';
-// import { theme } from './src/config/theme';
-
-// // Keep splash screen visible while loading
-// SplashScreen.preventAutoHideAsync();
-
-// export default function App() {
-//   const [appIsReady, setAppIsReady] = useState(false);
-
-//   const [fontsLoaded] = useFonts({
-//     Inter: Inter_400Regular,
-//     'Inter-Medium': Inter_500Medium,
-//     'Inter-SemiBold': Inter_600SemiBold,
-//     Poppins: Poppins_400Regular,
-//     'Poppins-SemiBold': Poppins_600SemiBold,
-//     PatrickHand: PatrickHand_400Regular,
-//   });
-
-//   useEffect(() => {
-//     async function prepare() {
-//       try {
-//         // Pre-load any assets here
-//         await new Promise(resolve => setTimeout(resolve, 1000));
-//       } catch (e) {
-//         console.warn(e);
-//       } finally {
-//         setAppIsReady(true);
-//       }
-//     }
-
-//     prepare();
-//   }, []);
-
-//   useEffect(() => {
-//     if (appIsReady && fontsLoaded) {
-//       SplashScreen.hideAsync();
-//     }
-//   }, [appIsReady, fontsLoaded]);
-
-//   if (!appIsReady || !fontsLoaded) {
-//     return null;
-//   }
-
-//   return (
-//     <SafeAreaProvider>
-//       <StatusBar style="dark" backgroundColor={theme.colors.background} />
-//       <AppNavigator />
-//     </SafeAreaProvider>
-//   );
-// }
-
+// @ts-nocheck
 import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import {
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-} from '@expo-google-fonts/inter';
-import {
-  Poppins_400Regular,
-  Poppins_600SemiBold,
-} from '@expo-google-fonts/poppins';
-import {
-  PatrickHand_400Regular,
-} from '@expo-google-fonts/patrick-hand';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { View, Text, ActivityIndicator } from 'react-native';
+import OnboardingNavigator from './src/navigation/OnboardingNavigator';
+import { supabase } from './src/config/supabase';
 
-import AppNavigator from './src/navigation/AppNavigator';
-import { theme } from './src/config/theme';
-
-// Keep splash screen visible while loading
-SplashScreen.preventAutoHideAsync();
+const Stack = createStackNavigator();
 
 export default function App() {
-  const [appIsReady, setAppIsReady] = useState(false);
-
-  const [fontsLoaded] = useFonts({
-    Inter: Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    Poppins: Poppins_400Regular,
-    'Poppins-SemiBold': Poppins_600SemiBold,
-    PatrickHand: PatrickHand_400Regular,
-  });
+  const [loading, setLoading] = useState(true);
+  const [isOnboarded, setIsOnboarded] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        // Pre-load any assets here
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
-    }
-
-    prepare();
+    checkOnboardingStatus();
   }, []);
 
-  useEffect(() => {
-    if (appIsReady && fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [appIsReady, fontsLoaded]);
+  const checkOnboardingStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
 
-  if (!appIsReady || !fontsLoaded) {
-    return null;
+      if (user) {
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('onboarding_completed')
+          .eq('id', user.id)
+          .single();
+
+        setIsOnboarded(profile?.onboarding_completed || false);
+      }
+    } catch (error) {
+      console.error('Error checking onboarding:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
+        <ActivityIndicator size="large" color="#FF6B9D" />
+        <Text style={{ marginTop: 16, color: '#6B7280' }}>Loading...</Text>
+      </View>
+    );
   }
 
   return (
-    <SafeAreaProvider>
-      <StatusBar style="dark" backgroundColor={theme.colors.background} />
-      <AppNavigator />
-    </SafeAreaProvider>
+    <NavigationContainer>
+      {!user || !isOnboarded ? (
+        <OnboardingNavigator />
+      ) : (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="MainApp">
+            {() => (
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🎉 Main App Coming Soon!</Text>
+                <Text style={{ marginTop: 8, color: '#6B7280' }}>Onboarding completed successfully</Text>
+              </View>
+            )}
+          </Stack.Screen>
+        </Stack.Navigator>
+      )}
+    </NavigationContainer>
   );
 }
